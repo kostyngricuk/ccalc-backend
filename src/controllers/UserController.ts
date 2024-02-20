@@ -20,8 +20,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       user: {
         id: user._id,
         email: user.email,
-        token: generateToken(user._id)
-      }
+      },
+      token: generateToken(user._id)
     })
   } else {
     res.status(401);
@@ -40,9 +40,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   await user.save();
 
   res.status(201).json({
-    success: true, user: {
+    success: true,
+    user: {
       email: user.email,
-      token: generateToken(user._id)
-    }
+    },
+    token: generateToken(user._id)
   });
 })
