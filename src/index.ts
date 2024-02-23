@@ -9,19 +9,19 @@ import { notFound, errorHandler } from './middlewares/ErrorMiddleware';
 dotenv.config();
 
 const host = process.env.HOST || 'localhost';
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 const app: Express = express();
 
 connectDB();
 
 const corsOptions: CorsOptions = {
-  origin: `http://${host}:${port}`
+  origin: `http://localhost:3000`
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 // Auth routes
 app.use("/api/auth", AuthRoute);

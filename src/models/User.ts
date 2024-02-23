@@ -20,7 +20,8 @@ export interface IUser extends mongoose.Document {
   token?: string,
   createdAt: Date,
   updatedAt: Date,
-  comparePassword(password: string): Promise<boolean>;
+  comparePassword(password: string): Promise<boolean>,
+  existUser(email: string): Promise<boolean>;
 }
 
 const UserSchema = new mongoose.Schema({
@@ -77,6 +78,11 @@ UserSchema.pre("save", async function (next) {
 
   return next();
 })
+
+UserSchema.methods.existUser = async function (email: string) {
+  const user = this as IUser;
+  return bcrypt.compareSync(email, user.email);
+}
 
 UserSchema.methods.comparePassword = async function (password: string) {
   const user = this as IUser;
