@@ -41,7 +41,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const user = new User({
-    email, password
+    email,
+    password
   });
 
   await user.save();
@@ -50,6 +51,28 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     user: {
       email: user.email,
+    },
+    token: generateToken(user._id)
+  });
+})
+
+// @Route /api/user/update
+// @Method POST
+export const update = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(200);
+    throw new Error("User not found");
+  }
+
+  await user.save();
+
+  res.status(201).json({
+    success: true,
+    user: {
+      email: user.email
     },
     token: generateToken(user._id)
   });

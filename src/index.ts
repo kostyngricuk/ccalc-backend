@@ -3,6 +3,7 @@ import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import AuthRoute from './routes/AuthRoute';
+import UserRoute from './routes/UserRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { notFound, errorHandler } from './middlewares/ErrorMiddleware';
 
@@ -25,6 +26,9 @@ app.use(express.urlencoded({ extended: false }));
 
 // Auth routes
 app.use("/api/auth", AuthRoute);
+
+// User routes
+app.use("/api/user", UserRoute);
 
 // Default route
 app.use("/api", ProtectedRoute);
