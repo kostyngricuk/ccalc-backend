@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
@@ -17,8 +18,11 @@ const app: Express = express();
 connectDB();
 
 const corsOptions: CorsOptions = {
+  credentials: true,
   origin: `http://localhost:3000`
 };
+
+app.use(cookieParser("secret"));
 
 app.use(cors(corsOptions));
 app.use(express.json());

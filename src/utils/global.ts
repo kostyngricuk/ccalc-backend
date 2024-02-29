@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import dayjs from "dayjs";
 
-
 const setAuthCookie = ({
   res,
   token
@@ -9,12 +8,11 @@ const setAuthCookie = ({
   res: Response,
   token: string
 }) => {
-  res.cookie("auth", JSON.stringify({
-    token
-  }), {
+  res.cookie("e-access-token", token, {
     secure: process.env.NODE_ENV !== "development",
-    httpOnly: true,
+    httpOnly: false,
     expires: dayjs().add(30, "days").toDate(),
+    signed: true
   });
 }
 

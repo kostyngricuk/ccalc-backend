@@ -76,10 +76,8 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   await user.save();
 
-  res.status(201).json({
+  res.status(200).json({
     success: true,
-    user: {
-      email: user.email
-    }
+    user
   });
 })

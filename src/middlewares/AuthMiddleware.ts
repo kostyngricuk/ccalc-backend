@@ -11,7 +11,7 @@ interface IUserJwtPayload {
 }
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const reqToken = req?.cookies?.auth?.token;
+  const reqToken = req?.signedCookies['e-access-token'];
   if (!reqToken) {
     return res.status(401).json({ success: false, message: 'Access denied' });
   }
