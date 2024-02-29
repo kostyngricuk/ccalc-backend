@@ -12,25 +12,20 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    res.status(200);
     throw new Error("User not found");
   }
 
   if (!await user.comparePassword(password)) {
-    res.status(200);
-    throw new Error("Email or password incorrect");
+    throw new Error("Password incorrect");
   }
 
   setAuthCookie({
     res,
-    token: generateToken(user._id)
+    token: generateToken(user)
   });
   res.status(200).json({
     success: true,
-    user: {
-      id: user._id,
-      email: user.email,
-    }
+    user
   })
 })
 
@@ -40,7 +35,6 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (await User.findOne({ email })) {
-    res.status(200);
     throw new Error("User exist");
   }
 
@@ -53,29 +47,43 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   setAuthCookie({
     res,
-    token: generateToken(user._id)
+    token: generateToken(user)
   });
   res.status(201).json({
     success: true,
-    user: {
-      email: user.email,
-    }
+    user: user
   });
 })
 
 // @Route /api/user/update
 // @Method POST
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const {
+    gender,
+    age,
+    height,
+    weight,
+    weightGoal
+  } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await User.findOneAndUpdate({ _id: req.userId }, {
+    gender,
+    age,
+    height,
+    weight,
+    weightGoal
+  }, {
+    new: true
+  });
+
   if (!user) {
-    res.status(200);
     throw new Error("User not found");
   }
 
-  await user.save();
-
+  setAuthCookie({
+    res,
+    token: generateToken(user)
+  });
   res.status(200).json({
     success: true,
     user

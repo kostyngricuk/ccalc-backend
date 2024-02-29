@@ -24,6 +24,20 @@ export interface IUser extends mongoose.Document {
   existUser(email: string): Promise<boolean>;
 }
 
+export interface IUserJwtPayload {
+  _id: number,
+  email: string,
+  height?: number,
+  weight?: number,
+  weightGoal?: number,
+  age?: number,
+  gender: Genders,
+  calorieWidget: {
+    limit: number,
+    eaten: number,
+  },
+}
+
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
