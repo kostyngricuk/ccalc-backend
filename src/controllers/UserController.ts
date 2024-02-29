@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 
 import User from '../models/User';
 import generateToken from '../utils/generateToken';
+import setAuthCookie from '../utils/global';
 
 // @Route /api/auth/login
 // @Method POST
@@ -20,13 +21,16 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Email or password incorrect");
   }
 
+  setAuthCookie({
+    res,
+    token: generateToken(user._id)
+  });
   res.status(200).json({
     success: true,
     user: {
       id: user._id,
       email: user.email,
-    },
-    token: generateToken(user._id)
+    }
   })
 })
 
@@ -47,12 +51,15 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   await user.save();
 
+  setAuthCookie({
+    res,
+    token: generateToken(user._id)
+  });
   res.status(201).json({
     success: true,
     user: {
       email: user.email,
-    },
-    token: generateToken(user._id)
+    }
   });
 })
 
@@ -73,7 +80,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     user: {
       email: user.email
-    },
-    token: generateToken(user._id)
+    }
   });
 })

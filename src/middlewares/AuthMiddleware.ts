@@ -11,13 +11,12 @@ interface IUserJwtPayload {
 }
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const headerAuth = req.header('Authorization');
-  if (!headerAuth) {
+  const reqToken = req?.cookies?.auth?.token;
+  if (!reqToken) {
     return res.status(401).json({ success: false, message: 'Access denied' });
   }
   try {
-    const token = headerAuth.split(' ')[1];
-    const { id } = <IUserJwtPayload>jwt.verify(token, process.env.JWT_SECRET as string);
+    const { id } = <IUserJwtPayload>jwt.verify(reqToken, process.env.JWT_SECRET as string);
     req.userId = id;
     next();
   } catch (error) {
