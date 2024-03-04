@@ -55,6 +55,82 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   });
 })
 
+// @Route /api/auth/reset
+// @Method POST
+export const reset = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  const verifyCode = '1111';
+
+  const user = await User.findOneAndUpdate({ email }, {
+    verifyCode
+  }, {
+    new: true
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // TODO: SENDING CODE ON EMAIL
+
+  res.status(200).json({
+    success: true,
+  })
+})
+
+// @Route /api/auth/verifyCode
+// @Method POST
+export const verifyCode = asyncHandler(async (req: Request, res: Response) => {
+  const { email, code } = req.body;
+
+  const user = await User.findOneAndUpdate({ email, verifyCode: code }, {
+    code: ''
+  }, {
+    new: true
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  setAuthCookie({
+    res,
+    token: generateToken(user)
+  });
+
+  res.status(200).json({
+    success: true,
+    user
+  })
+})
+
+// @Route /api/auth/changePassword
+// @Method POST
+export const changePassword = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  user.password = password;
+
+  await user.save();
+
+  setAuthCookie({
+    res,
+    token: generateToken(user)
+  });
+
+  res.status(200).json({
+    success: true,
+    user
+  })
+})
+
 // @Route /api/user/update
 // @Method POST
 export const update = asyncHandler(async (req: Request, res: Response) => {

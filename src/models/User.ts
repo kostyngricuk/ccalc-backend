@@ -20,6 +20,7 @@ export interface IUser extends mongoose.Document {
   token?: string,
   createdAt: Date,
   updatedAt: Date,
+  verifyCode: number,
   comparePassword(password: string): Promise<boolean>,
   existUser(email: string): Promise<boolean>;
 }
@@ -73,7 +74,10 @@ const UserSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-  }
+  },
+  verifyCode: {
+    type: Number,
+  },
 }, {
   timestamps: true
 });

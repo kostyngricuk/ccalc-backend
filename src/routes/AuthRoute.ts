@@ -1,9 +1,12 @@
 import express from 'express';
-import { login, register } from '../controllers/UserController';
+import { login, register, reset, verifyCode, changePassword } from '../controllers/UserController';
 
 const router = express.Router();
 
 router.route('/login').post(login);
 router.route('/register').post(register);
+router.route('/reset').post(reset);
+router.route('/verifyCode').post(verifyCode);
+router.route('/changePassword').post(changePassword);
 
 export default router;
