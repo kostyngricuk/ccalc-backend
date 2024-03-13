@@ -77,6 +77,9 @@ export const reset = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json({
     success: true,
+    user: {
+      email
+    }
   })
 })
 
@@ -92,34 +95,8 @@ export const verifyCode = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error("Verification code is not valid");
   }
-
-  setAuthCookie({
-    res,
-    token: generateToken(user)
-  });
-
-  res.status(200).json({
-    success: true,
-    user
-  })
-})
-
-// @Route /api/auth/changePassword
-// @Method POST
-export const changePassword = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  user.password = password;
-
-  await user.save();
 
   setAuthCookie({
     res,

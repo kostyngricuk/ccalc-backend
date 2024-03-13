@@ -14,7 +14,8 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     age,
     height,
     weight,
-    weightGoal
+    weightGoal,
+    password
   } = req.body;
 
   const user = await User.findOneAndUpdate({ _id: req.userId }, {
@@ -40,6 +41,11 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("User not found" + req.userId);
   }
 
+  if (password) {
+    user.password = password;
+  }
+  await user.save();
+
   setAuthCookie({
     res,
     token: generateToken(user)
@@ -48,4 +54,30 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     user
   });
+})
+
+// @Route /api/user/changePassword
+// @Method POST
+export const changePassword = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  user.password = password;
+
+  await user.save();
+
+  setAuthCookie({
+    res,
+    token: generateToken(user)
+  });
+
+  res.status(200).json({
+    success: true,
+    user
+  })
 })
