@@ -15,35 +15,46 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     height,
     weight,
     weightGoal,
-    password
+    oldPassword,
+    password,
+    email
   } = req.body;
 
-  const user = await User.findOneAndUpdate({ _id: req.userId }, {
-    gender,
-    age,
-    height,
-    weight,
-    weightGoal,
-    calorieWidget: {
-      limit: calcDailyLimit({
-        height,
-        weightGoal,
-        age,
-        gender
-      }),
-      eaten: 0,
-    },
-  }, {
-    new: true
-  });
-
+  const user = await User.findOne({ _id: req.userId });
+  
   if (!user) {
     throw new Error("User not found" + req.userId);
   }
 
+  if (email) {
+    if (await User.findOne({ email })) {
+      throw new Error("This email has alredy used");
+    }
+    user.email = email;
+  }
+
   if (password) {
+    if (!await user.comparePassword(oldPassword)) {
+      throw new Error("Old password incorrect");
+    }
     user.password = password;
   }
+  
+  user.gender = gender;
+  user.age = age;
+  user.height = height;
+  user.weight = weight;
+  user.weightGoal = weightGoal;
+  user.calorieWidget = {
+    limit: calcDailyLimit({
+      height,
+      weightGoal,
+      age,
+      gender
+    }),
+    eaten: 0,
+  };
+  
   await user.save();
 
   setAuthCookie({
