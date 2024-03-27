@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import generateToken from '../utils/generateToken';
 import setAuthCookie from '../utils/global';
-import calcDailyLimit from '../utils/calculations';
+import errorCodes from '../constants/errors';
 
 // @Route /api/auth/login
 // @Method POST
@@ -13,11 +13,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error(errorCodes.USER_NOT_FOUND);
   }
 
   if (!await user.comparePassword(password)) {
-    throw new Error("Password incorrect");
+    throw new Error(errorCodes.PASSWORD_INCORRECT);
   }
 
   setAuthCookie({
@@ -36,7 +36,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (await User.findOne({ email })) {
-    throw new Error("User exist");
+    throw new Error(errorCodes.USER_EMAIL_EXIST);
   }
 
   const user = new User({
@@ -70,7 +70,7 @@ export const reset = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error(errorCodes.USER_NOT_FOUND);
   }
 
   // TODO: SENDING CODE ON EMAIL
@@ -95,7 +95,7 @@ export const verifyCode = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (!user) {
-    throw new Error("Verification code is not valid");
+    throw new Error(errorCodes.CODE_IS_NOT_VALID);
   }
 
   setAuthCookie({

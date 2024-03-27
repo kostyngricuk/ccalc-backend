@@ -5,6 +5,7 @@ import User from '../models/User';
 import generateToken from '../utils/generateToken';
 import setAuthCookie from '../utils/global';
 import calcDailyLimit from '../utils/calculations';
+import errorCodes from '../constants/errors';
 
 // @Route /api/user/update
 // @Method POST
@@ -23,19 +24,19 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({ _id: req.userId });
   
   if (!user) {
-    throw new Error("User not found" + req.userId);
+    throw new Error(errorCodes.USER_NOT_FOUND);
   }
 
-  if (email) {
+  if (email !== user.email) {
     if (await User.findOne({ email })) {
-      throw new Error("This email has alredy used");
+      throw new Error(errorCodes.USER_EMAIL_EXIST);
     }
     user.email = email;
   }
 
   if (password) {
     if (!await user.comparePassword(oldPassword)) {
-      throw new Error("Old password incorrect");
+      throw new Error(errorCodes.PASSWORD_INCORRECT);
     }
     user.password = password;
   }
@@ -75,7 +76,7 @@ export const changePassword = asyncHandler(async (req: Request, res: Response) =
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new Error(errorCodes.USER_NOT_FOUND);
   }
 
   user.password = password;
