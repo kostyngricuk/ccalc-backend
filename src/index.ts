@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db';
 import AuthRoute from './routes/AuthRoute';
 import UserRoute from './routes/UserRoute';
+import ProductRoute from './routes/ProductRoute';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { notFound, errorHandler } from './middlewares/ErrorMiddleware';
 
@@ -33,6 +34,9 @@ app.use("/api/auth", AuthRoute);
 
 // User routes
 app.use("/api/user", UserRoute);
+
+// User routes
+app.use("/api/product", ProductRoute);
 
 // Default route
 app.use("/api", ProtectedRoute);
