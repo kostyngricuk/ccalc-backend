@@ -105,7 +105,13 @@ export const eaten = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(errorCodes.USER_NOT_FOUND);
   }
 
-  user.calorieWidget.eaten += count;
+  const limit = user.calorieWidget.limit;
+  const eaten = user.calorieWidget.eaten + count;
+
+  user.calorieWidget = {
+    limit,
+    eaten
+  }
 
   await user.save();
 
