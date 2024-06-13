@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import { Request, Response } from 'express';
 
-import User from '../models/User';
+import User, { IUserJwtPayload } from '../models/User';
 import generateToken from '../utils/generateToken';
 import setAuthCookie from '../utils/global';
 import calcDailyLimit from '../utils/calculations';
@@ -22,7 +22,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   } = req.body;
 
   const user = await User.findOne({ _id: req.userId });
-  
+
   if (!user) {
     throw new Error(errorCodes.USER_NOT_FOUND);
   }
@@ -60,7 +60,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
   res.status(200).json({
     success: true,
@@ -85,7 +85,7 @@ export const changePassword = asyncHandler(async (req: Request, res: Response) =
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
 
   res.status(200).json({
@@ -117,7 +117,7 @@ export const eaten = asyncHandler(async (req: Request, res: Response) => {
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
 
   res.status(200).json({

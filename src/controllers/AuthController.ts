@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import { Request, Response } from 'express';
 
-import User from '../models/User';
+import User, { IUserJwtPayload } from '../models/User';
 import generateToken from '../utils/generateToken';
 import setAuthCookie from '../utils/global';
 import errorCodes from '../constants/errors';
@@ -22,7 +22,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
   res.status(200).json({
     success: true,
@@ -48,7 +48,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
   res.status(201).json({
     success: true,
@@ -100,7 +100,7 @@ export const verifyCode = asyncHandler(async (req: Request, res: Response) => {
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
 
   res.status(200).json({

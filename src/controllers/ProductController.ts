@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import { Request, Response } from 'express';
 
-import User from '../models/User';
+import User, { IUserJwtPayload } from '../models/User';
 import generateToken from '../utils/generateToken';
 import setAuthCookie from '../utils/global';
 import calcDailyLimit from '../utils/calculations';
@@ -60,7 +60,7 @@ export const changePassword = asyncHandler(async (req: Request, res: Response) =
 
   setAuthCookie({
     res,
-    token: generateToken(user)
+    token: generateToken(user as IUserJwtPayload)
   });
 
   res.status(200).json({
